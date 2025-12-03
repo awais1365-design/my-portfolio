@@ -1,39 +1,44 @@
 "use client";
 
 import { useState } from "react";
-import Button from '../UI/Button'
-import Input from '../UI/Input'
-import Textarea from '../UI/Textarea'
+import Button from "../UI/Button";
+import Input from "../UI/Input";
+import Textarea from "../UI/Textarea";
+
+// Define the type for the status state
+interface Status {
+  success: boolean;
+  message: string;
+}
 
 const ContactForm = () => {
-  const [status, setStatus] = useState<any>(null);
+  const [status, setStatus] = useState<Status | null>(null);
   const [isPending, setPending] = useState(false);
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setPending(true);
 
-    const form = new FormData(e.target);
+    const form = new FormData(e.currentTarget);
 
-    // Web3Forms API (FREE)
-    const response = await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      body: form
-    }).then((res) => res.json());
-
-    setPending(false);
-
-    if (response.success) {
-      setStatus({
-        success: true,
-        message: "Message sent successfully!"
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: form,
       });
-      e.target.reset();
-    } else {
-      setStatus({
-        success: false,
-        message: "Failed to send message. Try again."
-      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setStatus({ success: true, message: "Message sent successfully!" });
+        e.currentTarget.reset();
+      } else {
+        setStatus({ success: false, message: "Failed to send message. Try again." });
+      }
+    } catch (error) {
+      setStatus({ success: false, message: "An error occurred. Please try again." });
+    } finally {
+      setPending(false);
     }
   };
 
@@ -48,16 +53,13 @@ const ContactForm = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      {/* Required for Web3Forms */}
-      <input type="hidden" name="access_key" value="b650637c-9aa2-4154-9826-d3fca935688a" />
-
-      <Input
-        label="Full name"
-        id="name"
-        name="name"
-        placeholder="Your name here"
-        required
+      <input
+        type="hidden"
+        name="access_key"
+        value="b650637c-9aa2-4154-9826-d3fca935688a"
       />
+
+      <Input label="Full name" id="name" name="name" placeholder="Your name here" required />
 
       <Input
         label="Email address"
@@ -68,12 +70,7 @@ const ContactForm = () => {
         required
       />
 
-      <Input
-        label="Subject"
-        id="subject"
-        name="subject"
-        placeholder="Your subject here"
-      />
+      <Input label="Subject" id="subject" name="subject" placeholder="Your subject here" />
 
       <Textarea
         label="Message"
@@ -84,12 +81,11 @@ const ContactForm = () => {
         required
       />
 
-      {/* Error message */}
       {status?.success === false && (
         <p className="my-2 font-light text-red-600">{status.message}</p>
       )}
 
-      <Button text={isPending ? "Submitting..." : "Submit"} disabled={isPending} />
+      <Button type="submit" text={isPending ? "Submitting..." : "Submit"} disabled={isPending} />
     </form>
   );
 };
