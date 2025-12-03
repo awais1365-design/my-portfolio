@@ -2,7 +2,7 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
-  output:"export",
+  output:"standalone",
 
   images: {
     remotePatterns: [
