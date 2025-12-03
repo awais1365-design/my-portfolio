@@ -19,8 +19,10 @@ const ContactForm = () => {
     setPending(true);
     setStatus(null);
 
-    const form = e.target as HTMLFormElement; // ← SAFE form reference
+    const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
+
+    console.log("📨 Sending Form Data →", Object.fromEntries(formData.entries()));
 
     try {
       const response = await fetch("https://api.web3forms.com/submit", {
@@ -28,8 +30,11 @@ const ContactForm = () => {
         body: formData,
       });
 
+      console.log("📡 Raw Response:", response);
+
       const data = await response.json();
-      console.log("Web3Forms Response →", data);
+
+      console.log("🔍 Web3Forms JSON Response →", data);
 
       setPending(false);
 
@@ -38,7 +43,8 @@ const ContactForm = () => {
           success: true,
           message: "Message sent successfully!",
         });
-        form.reset(); // ← SAFE reset (no null)
+
+        form.reset();
       } else {
         setStatus({
           success: false,
@@ -46,7 +52,7 @@ const ContactForm = () => {
         });
       }
     } catch (error) {
-      console.error("Submit Error →", error);
+      console.error("❌ Submit Error →", error);
       setPending(false);
       setStatus({
         success: false,
@@ -61,7 +67,7 @@ const ContactForm = () => {
       <input
         type="hidden"
         name="access_key"
-        value="b650637c-9aa2-4154-9826-d3fca935688a"
+        value="YOUR_REAL_ACCESS_KEY_HERE"
       />
 
       <Input
