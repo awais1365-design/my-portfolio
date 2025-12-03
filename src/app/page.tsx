@@ -15,7 +15,7 @@ export default async function Home() {
     <main>
       <Hero />
       <Skills skills={skillList} />
-      <div className=" bg-red-500 mx-auto my-8 max-w-[1200px] px-4 md:my-[3.75rem]">
+      <div className=" mx-auto my-8 max-w-[1200px] px-4 md:my-[3.75rem]">
         {/* <ProjectSection projects={projects} /> */}
         <ServiceSection />
         {/* <TestimonialSection testimonials={testimonials} /> */}
